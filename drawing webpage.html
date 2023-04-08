@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Draw and Save Image</title>
+    <style>
+  #canvas {
+    border: 1px solid white;
+    background-color: black;
+  }
+  #container {
+ 
+  background-size: cover;
+  background-position: center;
+}
+
+
+/* Style the save image button */
+#save-image {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: white;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#save-image:hover {
+  background-color: black;
+  color: white;
+}
+    </style>
+  </head>
+  <body>
+    <h1>Taking image</h1>
+    <div id="container">
+      <div id="drawing-area">
+        <canvas id="canvas" width="250" height="400"></canvas>
+      </div>
+      <div id="controls">
+        <button id="save-image">Save Image</button>
+      </div>
+    </div>
+    <script>
+      let canvas = document.querySelector("#canvas");
+      let context = canvas.getContext("2d");
+
+      canvas.addEventListener("mousedown", startPosition);
+      canvas.addEventListener("mouseup", finishedPosition);
+      canvas.addEventListener("mousemove", draw);
+
+      let painting = false;
+
+      function startPosition(e) {
+        painting = true;
+        draw(e);
+      }
+
+      function finishedPosition() {
+        painting = false;
+        context.beginPath();
+      }
+
+      function draw(e) {
+        if (!painting) return;
+        context.lineWidth = 10;
+        context.lineCap = "round";
+        context.strokeStyle = "white";
+        context.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        context.stroke();
+        context.beginPath();
+        context.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+      }
+
+      document.getElementById("save-image").addEventListener("click", () => {
+        let image = canvas.toDataURL("image/png");
+        let link = document.createElement("a");
+        link.download = "image.png";
+        link.href = image;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+      
+    </script>
+  </body>
+</html>
